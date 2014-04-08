@@ -4,5 +4,6 @@
     <string name="app_name">HomeControl</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="action_exit">Exit</string>
 
 </resources>
