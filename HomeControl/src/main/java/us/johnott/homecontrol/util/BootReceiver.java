@@ -7,11 +7,11 @@ import android.content.Intent;
 /**
  * Created by jbo on 4/8/14.
  */
-public class BootReciever extends BroadcastReceiver {
+public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        // Start udp reciever
-        Intent udpReciever = new Intent(context, UDPReceiver.class);
-        context.startService(udpReciever);
+        // Start udp receiver
+        Intent udpReceiver = new Intent(context, UDPReceiver.class);
+        context.startService(udpReceiver);
     }
 }

@@ -23,7 +23,7 @@
             android:label="UDPReciever" >
         </service>
         <receiver
-            android:name=".util.BootReciever" >
+            android:name=".util.BootReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
