@@ -19,6 +19,14 @@ public class UDPReceiver extends Service {
     private static PowerManager.WakeLock wakeLock;
 
     @Override
+    public void onCreate() {
+        super.onCreate();
+        pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, LOG_NAME);
+        wakeLock.acquire();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         // Remove the thread, as it is no longer needed
@@ -29,10 +37,6 @@ public class UDPReceiver extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (pm == null) {
-            pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, LOG_NAME);
-        }
         // Acquire wakelock
         if (!wakeLock.isHeld()) {
             wakeLock.acquire();
