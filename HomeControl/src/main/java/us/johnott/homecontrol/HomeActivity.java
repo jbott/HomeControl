@@ -6,8 +6,10 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 
+import us.johnott.homecontrol.mpd.MPDSocket;
 import us.johnott.homecontrol.util.UDPReceiver;
 
 
