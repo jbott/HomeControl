@@ -16,14 +16,14 @@ public class UDPReceiveThread extends Thread {
     private static final String LOG_NAME = UDPReceiveThread.class.getSimpleName();
     private static final int BUFFER_SIZE = 1024;
 
-    private DatagramSocket socket;
+    private DatagramSocket listenSocket;
     private static MPDSocket mpdSocket;
 
     public UDPReceiveThread(int port) {
         try {
-            socket = new DatagramSocket(port);
+            listenSocket = new DatagramSocket(port);
         } catch (SocketException e) {
-            Log.e(LOG_NAME, "Error starting socket!");
+            Log.e(LOG_NAME, "Error starting listenSocket!");
             e.printStackTrace();
         }
     }
@@ -35,7 +35,7 @@ public class UDPReceiveThread extends Thread {
         while(!isInterrupted()) {
             // Wait for UDP Packet
             try {
-                socket.receive(packet);
+                listenSocket.receive(packet);
                 String data = new String(packet.getData(), packet.getOffset(), packet.getLength()).trim();
                 processPacket(data);
             } catch (IOException e) {
@@ -44,7 +44,7 @@ public class UDPReceiveThread extends Thread {
             }
         }
         // Shutdown
-        socket.close();
+        listenSocket.close();
     }
 
     public void processPacket(String data) {
@@ -63,6 +63,17 @@ public class UDPReceiveThread extends Thread {
                     mpdSocket.sendCommand("next");
                     break;
             }
+        } else {
+            switch (data) {
+                case "TOUCH":
+                    mpdSocket.sendCommand("pause");
+                    break;
+                case "LONGTOUCH":
+                    break;
+                case "MOTION":
+                    break;
+            }
         }
+
     }
 }
