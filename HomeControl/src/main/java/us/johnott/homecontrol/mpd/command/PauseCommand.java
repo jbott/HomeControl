@@ -6,8 +6,9 @@ public class PauseCommand extends MPDCommand {
     }
 
     public String getCommand() {
-        getMpdConnection().sendCommand(new StatusCommand());
-        if (getMpdConnection().getLastCommand().getParsedResponse().get("state").equals("pause")) {
+        StatusCommand status = new StatusCommand();
+        getMpdConnection().sendCommand(status);
+        if (status.didSucceed() && status.getParsedResponse().get("state").equals("pause")) {
             appendToCommand("0");
         } else {
             appendToCommand("1");

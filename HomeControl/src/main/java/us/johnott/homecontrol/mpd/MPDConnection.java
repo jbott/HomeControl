@@ -34,15 +34,17 @@ public class MPDConnection {
         long startTime = System.currentTimeMillis();
         while (((System.currentTimeMillis() - startTime) < 5000) &&
                 !socket.hasError()) {
-            String last = socket.getInputLine().trim();
-            while (!last.equals("")) {
+            String last;
+            while (!(last = socket.getInputLine().trim()).equals("")) {
+                //Log.i(LOG_NAME, "Response Chunk: " + last);
                 response += last + "\n";
                 if (last.contains("OK")) {
                     // End of response
+                    Log.i(LOG_NAME, "Good command response!");
+                    //Log.i(LOG_NAME, "Response:\n" + response);
                     getLastCommand().setResponse(response);
                     return true;
                 }
-                last = socket.getInputLine().trim();
             }
         }
         return false;

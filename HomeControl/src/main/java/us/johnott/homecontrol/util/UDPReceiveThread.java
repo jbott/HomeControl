@@ -60,6 +60,12 @@ public class UDPReceiveThread extends Thread {
                 case "77E1E024":
                     mpdConnection.sendCommand(new NextCommand());
                     break;
+                case "77E1D024":
+                    mpdConnection.sendCommand(new VolumeUpCommand());
+                    break;
+                case "77E1B024":
+                    mpdConnection.sendCommand(new VolumeDownCommand());
+                    break;
                 default:
                     // Unsupported code, this may produce large amounts of spam due to false receives, so it is commented out
                     //Log.i(LOG_NAME, "Unknown IRCODE: " + data);

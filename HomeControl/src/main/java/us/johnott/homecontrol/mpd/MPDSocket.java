@@ -58,9 +58,12 @@ public class MPDSocket {
 
     public String getInputLine() {
         try {
-            return input.readLine();
+            String line = input.readLine();
+            if (line != null)
+                return line;
         } catch (IOException e) {
-            return "";
+            // Do nothing
         }
+        return "";
     }
 }

@@ -65,6 +65,10 @@ public class MPDCommand {
         return parsedResponse;
     }
 
+    public boolean didSucceed() {
+        return didSucceed;
+    }
+
     public MPDConnection getMpdConnection() {
         return mpdConnection;
     }
