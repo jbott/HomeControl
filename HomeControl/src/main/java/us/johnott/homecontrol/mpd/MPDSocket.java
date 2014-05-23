@@ -2,8 +2,11 @@ package us.johnott.homecontrol.mpd;
 
 import android.util.Log;
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
 
@@ -13,7 +16,7 @@ public class MPDSocket {
     private String ip;
     private int port;
     private Socket socket;
-    private InputStream input;
+    private BufferedReader input;
     private PrintStream output;
 
     public MPDSocket(String ip, int port) {
@@ -22,10 +25,11 @@ public class MPDSocket {
         openSocket();
     }
 
-    private void openSocket() {
-         try {
+    public void openSocket() {
+        try {
             socket = new Socket(ip, port);
-            input = socket.getInputStream();
+            input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            input.readLine(); // Get rid of the initial OK MPD (Version) line
             output = new PrintStream(socket.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
@@ -44,15 +48,19 @@ public class MPDSocket {
     }
 
     public void sendCommand(String command) {
-        Log.i("MPDSocket", "Sending command: " + command);
         output.println(command);
         output.flush();
-        if (output.checkError()) {
-            // Socket died, restart it
-            Log.i("MPDSocket", "Socket died, restarting");
-            closeSocket();
-            openSocket();
-            output.println(command);
+    }
+
+    public boolean hasError() {
+        return output.checkError();
+    }
+
+    public String getInputLine() {
+        try {
+            return input.readLine();
+        } catch (IOException e) {
+            return "";
         }
     }
 }

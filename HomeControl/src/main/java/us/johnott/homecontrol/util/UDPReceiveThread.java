@@ -7,17 +7,16 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
-import us.johnott.homecontrol.mpd.MPDSocket;
+import us.johnott.homecontrol.mpd.MPDConnection;
+import us.johnott.homecontrol.mpd.command.*;
 
-/**
- * Created by jbo on 4/7/14.
- */
 public class UDPReceiveThread extends Thread {
     private static final String LOG_NAME = UDPReceiveThread.class.getSimpleName();
     private static final int BUFFER_SIZE = 1024;
 
     private DatagramSocket listenSocket;
-    private static MPDSocket mpdSocket;
+
+    private static MPDConnection mpdConnection;
 
     public UDPReceiveThread(int port) {
         try {
@@ -29,7 +28,7 @@ public class UDPReceiveThread extends Thread {
     }
 
     public void run() {
-        mpdSocket = new MPDSocket("192.168.1.91", 6600);
+        mpdConnection = new MPDConnection("192.168.1.91", 6600);
         byte buffer[] = new byte[BUFFER_SIZE];
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
         while(!isInterrupted()) {
@@ -48,29 +47,38 @@ public class UDPReceiveThread extends Thread {
     }
 
     public void processPacket(String data) {
-        Log.d(LOG_NAME, "Data: " + data);
         if (data.startsWith("IRCODE=")) {
             data = data.substring(7);
             switch (data) {
                 case "77E17A24":
                 case "77E1BA24":
-                    mpdSocket.sendCommand("pause");
+                    mpdConnection.sendCommand(new PauseCommand());
                     break;
                 case "77E11024":
-                    mpdSocket.sendCommand("previous");
+                    mpdConnection.sendCommand(new PreviousCommand());
                     break;
                 case "77E1E024":
-                    mpdSocket.sendCommand("next");
+                    mpdConnection.sendCommand(new NextCommand());
+                    break;
+                default:
+                    // Unsupported code, this may produce large amounts of spam due to false receives, so it is commented out
+                    //Log.i(LOG_NAME, "Unknown IRCODE: " + data);
                     break;
             }
         } else {
             switch (data) {
                 case "TOUCH":
-                    mpdSocket.sendCommand("pause");
+                    mpdConnection.sendCommand(new PauseCommand());
                     break;
                 case "LONGTOUCH":
+                    mpdConnection.sendCommand(new NextCommand());
                     break;
+                /* Currently Unsupported
                 case "MOTION":
+                    break;
+                */
+                default:
+                    Log.i(LOG_NAME, "Unknown packet: " + data);
                     break;
             }
         }
