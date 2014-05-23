@@ -28,6 +28,7 @@ public class MPDSocket {
     public void openSocket() {
         try {
             socket = new Socket(ip, port);
+            socket.setSoTimeout(100);
             input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             input.readLine(); // Get rid of the initial OK MPD (Version) line
             output = new PrintStream(socket.getOutputStream());
